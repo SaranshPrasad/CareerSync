@@ -7,7 +7,7 @@ const userRouter = require("./src/routes/userRouter");
 require("dotenv").config();
 
 app.use(cors({
-    origin:process.env.VITE_URL || "http://localhost:5173" ,
+    origin: "https://career-sync-tmvm-pi.vercel.app" || "http://localhost:5173" ,
     methods:["GET", "PUT", "POST", "PATCH", "DELETE"],
     credentials:true
 }));
