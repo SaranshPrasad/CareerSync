@@ -1,138 +1,152 @@
-
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router";
+
 import {
-    LuArrowLeft,
-    LuCopy,
-    LuCheck,
-    LuSparkles,
-    LuFileText,
-    LuGithub,
-    LuCheckCircle2,
-    LuAlertCircle,
-    LuTarget,
-    LuBriefcaseBusiness,
-    LuCode2,
-    LuChevronDown,
-    LuChevronUp,
-} from "react-icons/lu";
-import { FaLinkedinIn } from "react-icons/fa";
+  FiCopy,
+  FiCheck,
+  FiChevronDown,
+  FiChevronUp,
+  FiFileText,
+  FiLinkedin,
+  FiGithub,
+  FiAlertTriangle,
+  FiTarget,
+  FiTrendingUp,
+  FiArrowRight,
+  FiArrowLeft,
+  FiRefreshCw,
+} from "react-icons/fi";
 
 /* =========================================================
    COPY BUTTON
 ========================================================= */
 
-const CopyButton = ({ text = "", label = "Copy" }) => {
-    const [copied, setCopied] = useState(false);
+const CopyButton = ({ text, small = false }) => {
+  const [copied, setCopied] = useState(false);
 
-    const handleCopy = async () => {
-        if (!text) return;
+  const handleCopy = async () => {
+    if (!text) return;
 
-        try {
-            await navigator.clipboard.writeText(text);
-            setCopied(true);
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
 
-            setTimeout(() => {
-                setCopied(false);
-            }, 2000);
-        } catch (error) {
-            console.error("Copy failed:", error);
-        }
-    };
+      setTimeout(() => {
+        setCopied(false);
+      }, 1800);
+    } catch (error) {
+      console.error("Copy failed:", error);
+    }
+  };
 
-    return (
-        <button
-            onClick={handleCopy}
-            disabled={!text}
-            className="
-                flex items-center gap-2 rounded-full
-                bg-gray-950 px-4 py-2
-                font-body text-xs text-white
-                transition-all duration-200
-                hover:bg-blue-600
-                disabled:cursor-not-allowed
-                disabled:opacity-40
-            "
-        >
-            {copied ? (
-                <>
-                    <LuCheck size={14} />
-                    Copied
-                </>
-            ) : (
-                <>
-                    <LuCopy size={14} />
-                    {label}
-                </>
-            )}
-        </button>
-    );
+  return (
+    <button
+      onClick={handleCopy}
+      disabled={!text}
+      className={`inline-flex items-center gap-2 rounded-xl border border-blue-100 bg-blue-50 font-body font-medium text-blue-600 transition hover:border-blue-200 hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-40 ${
+        small ? "px-3 py-1.5 text-xs" : "px-3.5 py-2 text-xs"
+      }`}
+    >
+      {copied ? (
+        <>
+          <FiCheck className="text-green-500" />
+          Copied
+        </>
+      ) : (
+        <>
+          <FiCopy />
+          Copy
+        </>
+      )}
+    </button>
+  );
+};
+
+/* =========================================================
+   SECTION HEADER
+========================================================= */
+
+const SectionHeader = ({
+  eyebrow,
+  title,
+  description,
+  icon,
+}) => {
+  return (
+    <div className="mb-7">
+      <div className="mb-2 flex items-center gap-2 font-body text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
+        {icon}
+        {eyebrow}
+      </div>
+
+      <h2 className="font-main text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+        {title}
+      </h2>
+
+      {description && (
+        <p className="mt-2 max-w-2xl font-body text-sm leading-6 text-slate-500">
+          {description}
+        </p>
+      )}
+    </div>
+  );
 };
 
 /* =========================================================
    SCORE CARD
 ========================================================= */
 
-const ScoreCard = ({ label, score = 0 }) => {
-    const safeScore = Math.min(
-        100,
-        Math.max(0, Number(score) || 0)
-    );
+const ScoreCard = ({
+  title,
+  score,
+  description,
+}) => {
+  const value = Number(score || 0);
 
-    return (
-        <div
-            className="
-                rounded-3xl
-                border border-gray-200
-                bg-white
-                p-6
-            "
-        >
-            <p className="font-body text-xs text-gray-400">
-                {label}
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_20px_rgba(15,23,42,0.04)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(15,23,42,0.07)]">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="font-body text-sm font-medium text-slate-600">
+            {title}
+          </p>
+
+          {description && (
+            <p className="mt-1 font-body text-xs text-slate-400">
+              {description}
             </p>
-
-            <div className="mt-3 flex items-end gap-1">
-                <span className="font-main text-4xl text-gray-950">
-                    {safeScore}
-                </span>
-
-                <span
-                    className="
-                        mb-1
-                        font-body
-                        text-sm
-                        text-gray-400
-                    "
-                >
-                    /100
-                </span>
-            </div>
-
-            <div
-                className="
-                    mt-4
-                    h-1.5
-                    overflow-hidden
-                    rounded-full
-                    bg-gray-100
-                "
-            >
-                <div
-                    className="
-                        h-full
-                        rounded-full
-                        bg-blue-500
-                        transition-all
-                        duration-700
-                    "
-                    style={{
-                        width: `${safeScore}%`,
-                    }}
-                />
-            </div>
+          )}
         </div>
-    );
+
+        <span
+          className={`font-main text-2xl font-bold ${
+            value >= 80
+              ? "text-green-500"
+              : value >= 60
+              ? "text-amber-500"
+              : "text-red-500"
+          }`}
+        >
+          {value}
+        </span>
+      </div>
+
+      <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-slate-100">
+        <div
+          className={`h-full rounded-full transition-all ${
+            value >= 80
+              ? "bg-green-500"
+              : value >= 60
+              ? "bg-amber-500"
+              : "bg-red-500"
+          }`}
+          style={{
+            width: `${Math.min(value, 100)}%`,
+          }}
+        />
+      </div>
+    </div>
+  );
 };
 
 /* =========================================================
@@ -140,1827 +154,943 @@ const ScoreCard = ({ label, score = 0 }) => {
 ========================================================= */
 
 const CopySection = ({
-    title,
-    icon,
-    text = "",
-    description = "",
+  title,
+  content,
+  description,
 }) => {
-    return (
-        <section
-            className="
-                overflow-hidden
-                rounded-3xl
-                border border-gray-200
-                bg-white
-            "
-        >
-            <div
-                className="
-                    flex
-                    flex-col
-                    gap-4
-                    border-b
-                    border-gray-100
-                    px-6
-                    py-5
-                    sm:flex-row
-                    sm:items-center
-                    sm:justify-between
-                "
-            >
-                <div className="flex items-center gap-3">
-                    <div
-                        className="
-                            flex
-                            h-9
-                            w-9
-                            shrink-0
-                            items-center
-                            justify-center
-                            rounded-xl
-                            bg-gray-950
-                            text-white
-                        "
-                    >
-                        {icon}
-                    </div>
+  if (!content) return null;
 
-                    <div>
-                        <p
-                            className="
-                                font-main
-                                text-sm
-                                text-gray-950
-                            "
-                        >
-                            {title}
-                        </p>
+  return (
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_4px_20px_rgba(15,23,42,0.035)]">
+      <div className="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-4">
+        <div>
+          <h3 className="font-main font-semibold text-slate-900">
+            {title}
+          </h3>
 
-                        {description && (
-                            <p
-                                className="
-                                    mt-0.5
-                                    font-body
-                                    text-[11px]
-                                    text-gray-400
-                                "
-                            >
-                                {description}
-                            </p>
-                        )}
-                    </div>
-                </div>
+          {description && (
+            <p className="mt-1 font-body text-xs text-slate-400">
+              {description}
+            </p>
+          )}
+        </div>
 
-                <CopyButton text={text} />
-            </div>
+        <CopyButton text={content} />
+      </div>
 
-            <div className="p-6">
-                {text ? (
-                    <pre
-                        className="
-                            whitespace-pre-wrap
-                            break-words
-                            font-body
-                            text-sm
-                            leading-7
-                            text-gray-600
-                        "
-                    >
-                        {text}
-                    </pre>
-                ) : (
-                    <p
-                        className="
-                            font-body
-                            text-sm
-                            text-gray-400
-                        "
-                    >
-                        No content generated.
-                    </p>
-                )}
-            </div>
-        </section>
-    );
+      <div className="whitespace-pre-wrap px-5 py-5 font-body text-sm leading-7 text-slate-600">
+        {content}
+      </div>
+    </div>
+  );
 };
 
 /* =========================================================
-   COLLAPSIBLE LIST
+   COLLAPSIBLE
 ========================================================= */
 
-const CollapsibleList = ({
-    title,
-    icon,
-    items = [],
-    emptyText = "Nothing to show.",
+const Collapsible = ({
+  title,
+  children,
+  defaultOpen = true,
 }) => {
-    const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(defaultOpen);
 
+  return (
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_4px_20px_rgba(15,23,42,0.035)]">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center justify-between px-5 py-4 text-left transition hover:bg-slate-50"
+      >
+        <span className="font-main font-semibold text-slate-900">
+          {title}
+        </span>
+
+        {open ? (
+          <FiChevronUp className="text-slate-400" />
+        ) : (
+          <FiChevronDown className="text-slate-400" />
+        )}
+      </button>
+
+      {open && (
+        <div className="border-t border-slate-100 p-5">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+};
+
+/* =========================================================
+   TAG
+========================================================= */
+
+const Tag = ({ children, type = "default" }) => {
+  const classes =
+    type === "missing"
+      ? "border-red-100 bg-red-50 text-red-500"
+      : "border-blue-100 bg-blue-50 text-blue-600";
+
+  return (
+    <span
+      className={`inline-flex rounded-lg border px-2.5 py-1.5 font-body text-xs font-medium ${classes}`}
+    >
+      {children}
+    </span>
+  );
+};
+
+/* =========================================================
+   INFO LIST
+========================================================= */
+
+const InfoList = ({
+  items,
+  emptyText,
+  icon,
+  iconClass,
+}) => {
+  if (!Array.isArray(items) || items.length === 0) {
     return (
+      <p className="font-body text-sm text-slate-400">
+        {emptyText}
+      </p>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      {items.map((item, index) => (
         <div
-            className="
-                rounded-3xl
-                border border-gray-200
-                bg-white
-            "
+          key={index}
+          className="flex gap-3 font-body text-sm leading-6 text-slate-600"
         >
-            <button
-                onClick={() => setOpen(!open)}
-                className="
-                    flex
-                    w-full
-                    items-center
-                    justify-between
-                    px-6
-                    py-5
-                    text-left
-                "
-            >
-                <div className="flex items-center gap-3">
-                    <div
-                        className="
-                            flex
-                            h-9
-                            w-9
-                            items-center
-                            justify-center
-                            rounded-xl
-                            bg-gray-950
-                            text-white
-                        "
-                    >
-                        {icon}
-                    </div>
+          <span className={`mt-1 ${iconClass}`}>
+            {icon}
+          </span>
 
-                    <div>
-                        <p
-                            className="
-                                font-main
-                                text-sm
-                                text-gray-950
-                            "
-                        >
-                            {title}
-                        </p>
-
-                        <p
-                            className="
-                                mt-0.5
-                                font-body
-                                text-[11px]
-                                text-gray-400
-                            "
-                        >
-                            {items.length} item
-                            {items.length !== 1 ? "s" : ""}
-                        </p>
-                    </div>
-                </div>
-
-                {open ? (
-                    <LuChevronUp
-                        size={18}
-                        className="text-gray-400"
-                    />
-                ) : (
-                    <LuChevronDown
-                        size={18}
-                        className="text-gray-400"
-                    />
-                )}
-            </button>
-
-            {open && (
-                <div
-                    className="
-                        border-t
-                        border-gray-100
-                        px-6
-                        py-5
-                    "
-                >
-                    {items.length > 0 ? (
-                        <ul className="space-y-3">
-                            {items.map((item, index) => (
-                                <li
-                                    key={index}
-                                    className="
-                                        flex
-                                        gap-3
-                                        font-body
-                                        text-sm
-                                        leading-6
-                                        text-gray-500
-                                    "
-                                >
-                                    <span
-                                        className="
-                                            mt-2
-                                            h-1.5
-                                            w-1.5
-                                            shrink-0
-                                            rounded-full
-                                            bg-blue-500
-                                        "
-                                    />
-
-                                    <span>
-                                        {item}
-                                    </span>
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p
-                            className="
-                                font-body
-                                text-sm
-                                text-gray-400
-                            "
-                        >
-                            {emptyText}
-                        </p>
-                    )}
-                </div>
-            )}
+          <span>{item}</span>
         </div>
-    );
+      ))}
+    </div>
+  );
 };
 
 /* =========================================================
-   PLATFORM HEADER
-========================================================= */
-
-const PlatformHeader = ({
-    icon,
-    title,
-    description,
-}) => {
-    return (
-        <div className="mb-7">
-            <div className="flex items-center gap-3">
-                <div
-                    className="
-                        flex
-                        h-10
-                        w-10
-                        items-center
-                        justify-center
-                        rounded-xl
-                        bg-gray-950
-                        text-white
-                    "
-                >
-                    {icon}
-                </div>
-
-                <div>
-                    <p
-                        className="
-                            font-main
-                            text-lg
-                            text-gray-950
-                        "
-                    >
-                        {title}
-                    </p>
-
-                    <p
-                        className="
-                            mt-1
-                            font-body
-                            text-xs
-                            text-gray-400
-                        "
-                    >
-                        {description}
-                    </p>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-/* =========================================================
-   MAIN PAGE
+   ANALYSIS PAGE
 ========================================================= */
 
 const AnalysisPage = () => {
-    const location = useLocation();
-    const navigate = useNavigate();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-    const analysis = location.state?.analysis;
+  const analysis = location.state?.analysis;
 
-    /* ---------------------------------------------------------
-       ANALYSIS NOT FOUND
-    --------------------------------------------------------- */
+  /* =========================================================
+     NO ANALYSIS
+  ========================================================= */
 
-    if (!analysis) {
-        return (
-            <main
-                className="
-                    min-h-screen
-                    bg-[#f5f5f0]
-                    px-6
-                    py-32
-                "
-            >
-                <div className="mx-auto max-w-6xl">
-                    <button
-                        onClick={() => navigate("/")}
-                        className="
-                            flex
-                            items-center
-                            gap-2
-                            font-body
-                            text-sm
-                            text-gray-500
-                            transition
-                            hover:text-gray-950
-                        "
-                    >
-                        <LuArrowLeft size={16} />
-                        Back
-                    </button>
-
-                    <div className="mt-20 text-center">
-                        <div
-                            className="
-                                mx-auto
-                                flex
-                                h-16
-                                w-16
-                                items-center
-                                justify-center
-                                rounded-2xl
-                                bg-white
-                                text-gray-950
-                            "
-                        >
-                            <LuAlertCircle size={25} />
-                        </div>
-
-                        <h1
-                            className="
-                                mt-6
-                                font-main
-                                text-4xl
-                                text-gray-950
-                            "
-                        >
-                            Analysis not found
-                        </h1>
-
-                        <p
-                            className="
-                                mt-3
-                                font-body
-                                text-sm
-                                text-gray-400
-                            "
-                        >
-                            Please analyze your profile again.
-                        </p>
-
-                        <button
-                            onClick={() => navigate("/")}
-                            className="
-                                mt-7
-                                rounded-full
-                                bg-gray-950
-                                px-6
-                                py-3
-                                font-body
-                                text-sm
-                                text-white
-                                transition
-                                hover:bg-blue-600
-                            "
-                        >
-                            Analyze profile
-                        </button>
-                    </div>
-                </div>
-            </main>
-        );
-    }
-
-    /* ---------------------------------------------------------
-       SAFE DATA
-    --------------------------------------------------------- */
-
-    const scores = analysis.scores || {};
-    const equality = analysis.equality || {};
-    const ats = analysis.ats || {};
-    const resume = analysis.resume || {};
-    const linkedin = analysis.linkedin || {};
-    const github = analysis.github || {};
-    const copy = analysis.copy || {};
-
-    const resumeCopy = copy.resume || {};
-    const linkedinCopy = copy.linkedin || {};
-    const githubCopy = copy.github || {};
-
-    const safeExperience = resume.experience || [];
-    const safeProjects = resume.projects || [];
-    const safeEducation = resume.education || [];
-
-    /* ---------------------------------------------------------
-       COPY ALL HELPERS
-    --------------------------------------------------------- */
-
-    const resumeAll = [
-        resumeCopy.summary || "",
-        resumeCopy.skills || "",
-        resumeCopy.experience || "",
-        resumeCopy.projects || "",
-    ]
-        .filter(Boolean)
-        .join("\n\n");
-
-    const linkedinAll = [
-        linkedinCopy.headline || "",
-        linkedinCopy.about || "",
-        linkedinCopy.experience || "",
-    ]
-        .filter(Boolean)
-        .join("\n\n");
-
-    const githubAll = githubCopy.readme || github.readme || "";
-
+  if (!analysis) {
     return (
-        <main
-            className="
-                min-h-screen
-                bg-[#f5f5f0]
-                px-6
-                pb-24
-                pt-28
-            "
-        >
-            <div className="mx-auto max-w-6xl">
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 px-5 text-slate-900">
+        <div className="max-w-md text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-500">
+            <FiAlertTriangle size={24} />
+          </div>
 
-                {/* =================================================
-                    PAGE HEADER
-                ================================================= */}
+          <h1 className="mt-5 font-main text-2xl font-bold">
+            No analysis found
+          </h1>
 
-                <div className="mb-14">
-                    <button
-                        onClick={() => navigate(-1)}
-                        className="
-                            mb-8
-                            flex
-                            items-center
-                            gap-2
-                            font-body
-                            text-xs
-                            text-gray-400
-                            transition
-                            hover:text-gray-950
-                        "
-                    >
-                        <LuArrowLeft size={15} />
-                        Back to profile
-                    </button>
+          <p className="mt-3 font-body text-sm leading-6 text-slate-500">
+            Your analysis data is not available. Start a new
+            analysis to continue.
+          </p>
 
-                    <div className="mb-5 flex items-center gap-3">
-                        <span
-                            className="
-                                h-2
-                                w-2
-                                rounded-full
-                                bg-blue-500
-                            "
-                        />
+          <button
+            onClick={() => navigate("/product")}
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-body text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700"
+          >
+            Start new analysis
+            <FiArrowRight />
+          </button>
+        </div>
+      </div>
+    );
+  }
 
-                        <span
-                            className="
-                                font-body
-                                text-xs
-                                tracking-[0.2em]
-                                text-gray-400
-                            "
-                        >
-                            CAREERSYNC ANALYSIS
-                        </span>
-                    </div>
+  /* =========================================================
+     DATA
+  ========================================================= */
 
-                    <h1
-                        className="
-                            max-w-3xl
-                            font-main
-                            text-4xl
-                            tracking-tight
-                            text-gray-950
-                            sm:text-5xl
-                        "
-                    >
-                        Your profile,
-                        <br />
+  const scores = analysis.scores || {};
+  const equality = analysis.equality || {};
+  const ats = analysis.ats || {};
 
-                        <span className="text-gray-400">
-                            optimized for opportunities.
-                        </span>
-                    </h1>
+  const resume = analysis.resume || {};
+  const linkedin = analysis.linkedin || {};
+  const github = analysis.github || {};
 
-                    <p
-                        className="
-                            mt-5
-                            max-w-2xl
-                            font-body
-                            text-sm
-                            leading-6
-                            text-gray-500
-                        "
-                    >
-                        CareerSync analyzed your Resume, LinkedIn
-                        and GitHub to identify consistency,
-                        ATS opportunities and copy-ready improvements.
-                    </p>
-                </div>
+  const copy = analysis.copy || {};
 
-                {/* =================================================
-                    PROFILE EQUALITY
-                ================================================= */}
+  const resumeCopy = copy.resume || {};
+  const linkedinCopy = copy.linkedin || {};
+  const githubCopy = copy.github || {};
 
-                <section
-                    className="
-                        mb-12
-                        rounded-[2rem]
-                        border border-gray-200
-                        bg-white
-                        p-7
-                        sm:p-10
-                    "
-                >
-                    <div
-                        className="
-                            flex
-                            flex-col
-                            gap-8
-                            lg:flex-row
-                            lg:items-center
-                            lg:justify-between
-                        "
-                    >
-                        <div>
-                            <div className="flex items-center gap-2">
-                                <LuSparkles
-                                    size={17}
-                                    className="text-blue-500"
-                                />
+  const overallEquality =
+    equality.overallEqualityScore || 0;
 
-                                <p
-                                    className="
-                                        font-body
-                                        text-xs
-                                        tracking-[0.18em]
-                                        text-gray-400
-                                    "
-                                >
-                                    PROFILE EQUALITY
-                                </p>
-                            </div>
+  /* =========================================================
+     RENDER
+  ========================================================= */
 
-                            <h2
-                                className="
-                                    mt-4
-                                    font-main
-                                    text-4xl
-                                    text-gray-950
-                                "
-                            >
-                                {equality.overallEqualityScore ?? 0}
+  return (
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-body">
 
-                                <span
-                                    className="
-                                        ml-1
-                                        text-gray-300
-                                    "
-                                >
-                                    /100
-                                </span>
-                            </h2>
+      {/* =====================================================
+          HEADER
+      ===================================================== */}
 
-                            <p
-                                className="
-                                    mt-2
-                                    max-w-lg
-                                    font-body
-                                    text-sm
-                                    leading-6
-                                    text-gray-500
-                                "
-                            >
-                                How consistently your Resume,
-                                LinkedIn and GitHub currently
-                                represent the same professional identity.
-                            </p>
-                        </div>
+      <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4">
 
+          <div className="flex items-center gap-4">
+
+            <button
+              onClick={() => navigate("/product")}
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 text-slate-500 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+            >
+              <FiArrowLeft />
+            </button>
+
+            <div>
+              <p className="font-main text-sm font-bold tracking-tight text-slate-900">
+                Career<span className="text-blue-600">Sync</span>
+              </p>
+
+              <p className="font-body text-xs text-slate-400">
+                Profile analysis
+              </p>
+            </div>
+
+          </div>
+
+          <button
+            onClick={() => navigate("/product")}
+            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 font-body text-xs font-medium text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+          >
+            <FiRefreshCw />
+            New analysis
+          </button>
+
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-7xl px-5 py-10 sm:py-14">
+
+        {/* =====================================================
+            HERO
+        ===================================================== */}
+
+        <section className="mb-14">
+
+          <div className="max-w-3xl">
+
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 font-body text-xs font-semibold text-blue-600">
+              <span className="h-1.5 w-1.5 rounded-full bg-blue-600" />
+              CareerSync Analysis
+            </div>
+
+            <h1 className="font-main text-4xl font-bold leading-[1.08] tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
+              Your professional identity,
+              <span className="block text-blue-600">
+                analyzed & optimized.
+              </span>
+            </h1>
+
+            <p className="mt-5 max-w-2xl font-body text-sm leading-7 text-slate-500 sm:text-base">
+              CareerSync analyzed your Resume, LinkedIn profile
+              and GitHub presence to identify ATS improvements,
+              profile inconsistencies and optimization
+              opportunities.
+            </p>
+
+          </div>
+
+        </section>
+
+        {/* =====================================================
+            PROFILE CONSISTENCY
+        ===================================================== */}
+
+        <section className="mb-16">
+
+          <SectionHeader
+            eyebrow="Profile consistency"
+            title="How consistent is your profile?"
+            description="Your Resume, LinkedIn and GitHub should communicate the same professional identity."
+          />
+
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+
+            <ScoreCard
+              title="Overall Equality"
+              score={overallEquality}
+              description="Across all platforms"
+            />
+
+            <ScoreCard
+              title="Resume ↔ LinkedIn"
+              score={equality.resumeLinkedinScore}
+            />
+
+            <ScoreCard
+              title="Resume ↔ GitHub"
+              score={equality.resumeGithubScore}
+            />
+
+            <ScoreCard
+              title="LinkedIn ↔ GitHub"
+              score={equality.linkedinGithubScore}
+            />
+
+          </div>
+
+          <div className="mt-5 grid gap-5 lg:grid-cols-2">
+
+            {/* MATCHING */}
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_20px_rgba(15,23,42,0.035)]">
+
+              <h3 className="flex items-center gap-2 font-main font-semibold text-slate-900">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-50 text-green-500">
+                  <FiCheck />
+                </span>
+                Matching points
+              </h3>
+
+              <div className="mt-5">
+                <InfoList
+                  items={equality.matchingPoints}
+                  emptyText="No matching points provided."
+                  icon="•"
+                  iconClass="text-green-500"
+                />
+              </div>
+
+            </div>
+
+            {/* INCONSISTENCIES */}
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_20px_rgba(15,23,42,0.035)]">
+
+              <h3 className="flex items-center gap-2 font-main font-semibold text-slate-900">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 text-amber-500">
+                  <FiAlertTriangle />
+                </span>
+                Inconsistencies
+              </h3>
+
+              <div className="mt-5">
+                <InfoList
+                  items={equality.inconsistencies}
+                  emptyText="No major inconsistencies found."
+                  icon="•"
+                  iconClass="text-amber-500"
+                />
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        {/* =====================================================
+            ATS
+        ===================================================== */}
+
+        <section className="mb-16">
+
+          <SectionHeader
+            eyebrow="ATS optimization"
+            title="Resume ATS score"
+            description="See how well your resume performs against technical hiring systems and recruiter expectations."
+            icon={<FiTarget />}
+          />
+
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
+
+            <ScoreCard
+              title="ATS Score"
+              score={scores.atsScore}
+            />
+
+            <ScoreCard
+              title="Keyword Coverage"
+              score={scores.keywordCoverage}
+            />
+
+            <ScoreCard
+              title="Technical Relevance"
+              score={scores.technicalRelevance}
+            />
+
+            <ScoreCard
+              title="Impact"
+              score={scores.impactScore}
+            />
+
+            <ScoreCard
+              title="Readability"
+              score={scores.readabilityScore}
+            />
+
+          </div>
+
+          <div className="mt-5 grid gap-5 lg:grid-cols-3">
+
+            {/* TOP KEYWORDS */}
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_20px_rgba(15,23,42,0.035)]">
+
+              <h3 className="font-main font-semibold text-slate-900">
+                Top keywords
+              </h3>
+
+              <div className="mt-4 flex flex-wrap gap-2">
+
+                {Array.isArray(ats.topKeywords) &&
+                ats.topKeywords.length > 0 ? (
+                  ats.topKeywords.map((item, index) => (
+                    <Tag key={index}>
+                      {item}
+                    </Tag>
+                  ))
+                ) : (
+                  <span className="font-body text-sm text-slate-400">
+                    No keywords provided.
+                  </span>
+                )}
+
+              </div>
+
+            </div>
+
+            {/* MISSING KEYWORDS */}
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_20px_rgba(15,23,42,0.035)]">
+
+              <h3 className="font-main font-semibold text-slate-900">
+                Missing keywords
+              </h3>
+
+              <div className="mt-4 flex flex-wrap gap-2">
+
+                {Array.isArray(ats.missingKeywords) &&
+                ats.missingKeywords.length > 0 ? (
+                  ats.missingKeywords.map(
+                    (item, index) => (
+                      <Tag
+                        key={index}
+                        type="missing"
+                      >
+                        {item}
+                      </Tag>
+                    )
+                  )
+                ) : (
+                  <span className="font-body text-sm text-slate-400">
+                    No major missing keywords.
+                  </span>
+                )}
+
+              </div>
+
+            </div>
+
+            {/* IMPROVEMENTS */}
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_20px_rgba(15,23,42,0.035)]">
+
+              <h3 className="font-main font-semibold text-slate-900">
+                Improvement areas
+              </h3>
+
+              <div className="mt-4">
+
+                {Array.isArray(ats.improvementAreas) &&
+                ats.improvementAreas.length > 0 ? (
+                  <div className="space-y-3">
+
+                    {ats.improvementAreas.map(
+                      (item, index) => (
                         <div
-                            className="
-                                grid
-                                grid-cols-1
-                                gap-3
-                                sm:grid-cols-3
-                                sm:gap-5
-                            "
+                          key={index}
+                          className="flex gap-3 font-body text-sm leading-6 text-slate-600"
                         >
-                            <ScoreCard
-                                label="Resume ↔ LinkedIn"
-                                score={
-                                    equality.resumeLinkedinScore
-                                }
-                            />
+                          <span className="text-blue-600">
+                            →
+                          </span>
 
-                            <ScoreCard
-                                label="Resume ↔ GitHub"
-                                score={
-                                    equality.resumeGithubScore
-                                }
-                            />
-
-                            <ScoreCard
-                                label="LinkedIn ↔ GitHub"
-                                score={
-                                    equality.linkedinGithubScore
-                                }
-                            />
+                          <span>{item}</span>
                         </div>
-                    </div>
-                </section>
+                      )
+                    )}
 
-                {/* =================================================
-                    MATCHING + INCONSISTENCIES
-                ================================================= */}
+                  </div>
+                ) : (
+                  <span className="font-body text-sm text-slate-400">
+                    No major improvements required.
+                  </span>
+                )}
 
-                <section className="mb-14">
-                    <div className="mb-7">
-                        <p
-                            className="
-                                font-main
-                                text-lg
-                                text-gray-950
-                            "
-                        >
-                            Profile consistency
-                        </p>
+              </div>
 
-                        <p
-                            className="
-                                mt-1
-                                font-body
-                                text-xs
-                                text-gray-400
-                            "
-                        >
-                            What is already aligned and what needs
-                            to be synchronized.
-                        </p>
-                    </div>
+            </div>
 
-                    <div
-                        className="
-                            grid
-                            gap-5
-                            lg:grid-cols-2
-                        "
-                    >
-                        <CollapsibleList
-                            title="Matching points"
-                            icon={
-                                <LuCheckCircle2 size={17} />
-                            }
-                            items={
-                                equality.matchingPoints || []
-                            }
-                            emptyText="No matching points returned."
-                        />
+          </div>
 
-                        <CollapsibleList
-                            title="Inconsistencies"
-                            icon={
-                                <LuAlertCircle size={17} />
-                            }
-                            items={
-                                equality.inconsistencies || []
-                            }
-                            emptyText="No inconsistencies found."
-                        />
-                    </div>
-                </section>
+        </section>
 
-                {/* =================================================
-                    ATS PERFORMANCE
-                ================================================= */}
+        {/* =====================================================
+            RESUME
+        ===================================================== */}
 
-                <section className="mb-14">
-                    <div className="mb-7">
-                        <p
-                            className="
-                                font-main
-                                text-lg
-                                text-gray-950
-                            "
-                        >
-                            ATS performance
-                        </p>
+        <section className="mb-16">
 
-                        <p
-                            className="
-                                mt-1
-                                font-body
-                                text-xs
-                                text-gray-400
-                            "
-                        >
-                            Estimated quality based on resume
-                            structure, keywords and technical relevance.
-                        </p>
-                    </div>
+          <SectionHeader
+            eyebrow="Resume"
+            title="ATS-optimized resume"
+            description="Copy the optimized sections directly into your resume."
+            icon={<FiFileText />}
+          />
 
-                    <div
-                        className="
-                            grid
-                            gap-4
-                            sm:grid-cols-2
-                            lg:grid-cols-5
-                        "
-                    >
-                        <ScoreCard
-                            label="ATS Score"
-                            score={scores.atsScore}
-                        />
+          <div className="space-y-5">
 
-                        <ScoreCard
-                            label="Keyword Coverage"
-                            score={
-                                scores.keywordCoverage
-                            }
-                        />
+            <CopySection
+              title="Professional Summary"
+              content={
+                resumeCopy.summary ||
+                resume.summary
+              }
+            />
 
-                        <ScoreCard
-                            label="Technical Relevance"
-                            score={
-                                scores.technicalRelevance
-                            }
-                        />
+            <CopySection
+              title="Experience"
+              content={
+                resumeCopy.experience ||
+                resume.experience
+                  ?.map(
+                    (exp) =>
+                      `${exp.role} — ${exp.company}\n${(
+                        exp.bullets || []
+                      ).join("\n")}`
+                  )
+                  .join("\n\n")
+              }
+            />
 
-                        <ScoreCard
-                            label="Impact Score"
-                            score={
-                                scores.impactScore
-                            }
-                        />
+            <CopySection
+              title="Projects"
+              content={
+                resumeCopy.projects ||
+                resume.projects
+                  ?.map(
+                    (project) =>
+                      `${project.name}\n${(
+                        project.bullets || []
+                      ).join("\n")}`
+                  )
+                  .join("\n\n")
+              }
+            />
 
-                        <ScoreCard
-                            label="Readability"
-                            score={
-                                scores.readabilityScore
-                            }
-                        />
-                    </div>
-                </section>
+            <CopySection
+              title="Skills"
+              content={
+                resumeCopy.skills ||
+                Object.entries(
+                  resume.skills || {}
+                )
+                  .map(
+                    ([key, value]) =>
+                      `${key}: ${
+                        Array.isArray(value)
+                          ? value.join(", ")
+                          : value
+                      }`
+                  )
+                  .join("\n")
+              }
+            />
 
-                {/* =================================================
-                    ATS KEYWORDS
-                ================================================= */}
+          </div>
 
-                <section className="mb-14">
-                    <div className="mb-7">
-                        <div className="flex items-center gap-3">
-                            <div
-                                className="
-                                    flex
-                                    h-10
-                                    w-10
-                                    items-center
-                                    justify-center
-                                    rounded-xl
-                                    bg-gray-950
-                                    text-white
-                                "
-                            >
-                                <LuTarget size={17} />
-                            </div>
+          {/* EXPERIENCE DETAILS */}
+
+          {Array.isArray(resume.experience) &&
+            resume.experience.length > 0 && (
+              <div className="mt-8">
+
+                <Collapsible title="Optimized experience details">
+
+                  <div className="space-y-8">
+
+                    {resume.experience.map(
+                      (experience, index) => (
+                        <div key={index}>
+
+                          <div className="flex flex-col justify-between gap-2 sm:flex-row">
 
                             <div>
-                                <p
-                                    className="
-                                        font-main
-                                        text-lg
-                                        text-gray-950
-                                    "
-                                >
-                                    ATS keywords
-                                </p>
 
-                                <p
-                                    className="
-                                        mt-1
-                                        font-body
-                                        text-xs
-                                        text-gray-400
-                                    "
-                                >
-                                    Keywords that strengthen your
-                                    software engineering profile.
-                                </p>
+                              <h3 className="font-main font-semibold text-slate-900">
+                                {experience.role}
+                              </h3>
+
+                              <p className="mt-1 font-body text-sm font-medium text-blue-600">
+                                {experience.company}
+                              </p>
+
                             </div>
-                        </div>
-                    </div>
 
-                    <div
-                        className="
-                            rounded-[2rem]
-                            border border-gray-200
-                            bg-white
-                            p-7
-                            sm:p-10
-                        "
-                    >
-                        <p
-                            className="
-                                font-main
-                                text-sm
-                                text-gray-950
-                            "
-                        >
-                            Top keywords
-                        </p>
+                            <div className="font-body text-xs text-slate-400">
+                              {experience.startDate}{" "}
+                              —{" "}
+                              {experience.endDate}
+                            </div>
 
-                        <div
-                            className="
-                                mt-5
-                                flex
-                                flex-wrap
-                                gap-2
-                            "
-                        >
-                            {(ats.topKeywords || []).map(
-                                (keyword, index) => (
-                                    <span
-                                        key={index}
-                                        className="
-                                            rounded-full
-                                            bg-gray-100
-                                            px-4
-                                            py-2
-                                            font-body
-                                            text-xs
-                                            text-gray-600
-                                        "
-                                    >
-                                        {keyword}
-                                    </span>
-                                )
+                          </div>
+
+                          <div className="mt-4 space-y-3">
+
+                            {(
+                              experience.bullets ||
+                              []
+                            ).map(
+                              (bullet, bulletIndex) => (
+                                <div
+                                  key={bulletIndex}
+                                  className="flex gap-3 font-body text-sm leading-6 text-slate-600"
+                                >
+                                  <span className="text-blue-600">
+                                    •
+                                  </span>
+
+                                  <span>
+                                    {bullet}
+                                  </span>
+                                </div>
+                              )
                             )}
+
+                          </div>
+
                         </div>
+                      )
+                    )}
 
-                        {(ats.missingKeywords || []).length >
-                            0 && (
-                            <div className="mt-10">
-                                <p
-                                    className="
-                                        font-main
-                                        text-sm
-                                        text-gray-950
-                                    "
-                                >
-                                    Missing relevant keywords
-                                </p>
+                  </div>
 
-                                <div
-                                    className="
-                                        mt-5
-                                        flex
-                                        flex-wrap
-                                        gap-2
-                                    "
-                                >
-                                    {ats.missingKeywords.map(
-                                        (keyword, index) => (
-                                            <span
-                                                key={index}
-                                                className="
-                                                    rounded-full
-                                                    border
-                                                    border-gray-200
-                                                    px-4
-                                                    py-2
-                                                    font-body
-                                                    text-xs
-                                                    text-gray-500
-                                                "
-                                            >
-                                                {keyword}
-                                            </span>
-                                        )
-                                    )}
-                                </div>
+                </Collapsible>
+
+              </div>
+            )}
+
+          {/* PROJECTS */}
+
+          {Array.isArray(resume.projects) &&
+            resume.projects.length > 0 && (
+              <div className="mt-5">
+
+                <Collapsible title="Optimized projects">
+
+                  <div className="space-y-7">
+
+                    {resume.projects.map(
+                      (project, index) => (
+                        <div key={index}>
+
+                          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+
+                            <h3 className="font-main font-semibold text-slate-900">
+                              {project.name}
+                            </h3>
+
+                            <div className="flex flex-wrap gap-2">
+
+                              {(
+                                project.technologies ||
+                                []
+                              ).map(
+                                (tech, techIndex) => (
+                                  <Tag
+                                    key={techIndex}
+                                  >
+                                    {tech}
+                                  </Tag>
+                                )
+                              )}
+
                             </div>
-                        )}
 
-                        {(ats.improvementAreas || []).length >
-                            0 && (
-                            <div className="mt-10">
+                          </div>
+
+                          <div className="mt-4 space-y-2">
+
+                            {(
+                              project.bullets ||
+                              []
+                            ).map(
+                              (bullet, bulletIndex) => (
                                 <p
-                                    className="
-                                        font-main
-                                        text-sm
-                                        text-gray-950
-                                    "
+                                  key={bulletIndex}
+                                  className="font-body text-sm leading-6 text-slate-600"
                                 >
-                                    Improvement areas
+                                  • {bullet}
                                 </p>
+                              )
+                            )}
 
-                                <ul
-                                    className="
-                                        mt-5
-                                        space-y-3
-                                    "
-                                >
-                                    {ats.improvementAreas.map(
-                                        (item, index) => (
-                                            <li
-                                                key={index}
-                                                className="
-                                                    flex
-                                                    gap-3
-                                                    font-body
-                                                    text-sm
-                                                    leading-6
-                                                    text-gray-500
-                                                "
-                                            >
-                                                <span
-                                                    className="
-                                                        mt-2
-                                                        h-1.5
-                                                        w-1.5
-                                                        shrink-0
-                                                        rounded-full
-                                                        bg-blue-500
-                                                    "
-                                                />
+                          </div>
 
-                                                <span>
-                                                    {item}
-                                                </span>
-                                            </li>
-                                        )
-                                    )}
-                                </ul>
-                            </div>
-                        )}
-                    </div>
-                </section>
+                        </div>
+                      )
+                    )}
 
-                {/* =================================================
-                    RESUME
-                ================================================= */}
+                  </div>
 
-                <section className="mb-14">
-                    <PlatformHeader
-                        icon={
-                            <LuFileText size={18} />
-                        }
-                        title="ATS-ready resume"
-                        description="Copy the optimized sections directly into your resume."
-                    />
+                </Collapsible>
 
-                    <div className="mb-5 flex justify-end">
-                        <CopyButton
-                            text={resumeAll}
-                            label="Copy entire resume content"
-                        />
-                    </div>
+              </div>
+            )}
 
-                    <div className="space-y-5">
-                        <CopySection
-                            title="Professional Summary"
-                            icon={
-                                <LuFileText size={17} />
-                            }
-                            text={
-                                resumeCopy.summary ||
-                                resume.summary ||
-                                ""
-                            }
-                            description="2–3 line ATS-focused summary"
-                        />
+        </section>
 
-                        <CopySection
-                            title="Skills"
-                            icon={
-                                <LuCode2 size={17} />
-                            }
-                            text={
-                                resumeCopy.skills ||
-                                ""
-                            }
-                            description="Keyword-optimized technical skills"
-                        />
+        {/* =====================================================
+            LINKEDIN
+        ===================================================== */}
 
-                        <CopySection
-                            title="Experience"
-                            icon={
-                                <LuBriefcaseBusiness
-                                    size={17}
-                                />
-                            }
-                            text={
-                                resumeCopy.experience ||
-                                ""
-                            }
-                            description="Action-oriented, copy-ready bullets"
-                        />
+        <section className="mb-16">
 
-                        <CopySection
-                            title="Projects"
-                            icon={
-                                <LuCode2 size={17} />
-                            }
-                            text={
-                                resumeCopy.projects ||
-                                ""
-                            }
-                            description="Technical project descriptions"
-                        />
-                    </div>
-                </section>
+          <SectionHeader
+            eyebrow="LinkedIn"
+            title="LinkedIn optimization"
+            description="Position your LinkedIn profile around the same professional identity as your resume."
+            icon={<FiLinkedin />}
+          />
 
-                {/* =================================================
-                    RESUME STRUCTURED VIEW
-                ================================================= */}
+          <div className="space-y-5">
 
-                <section className="mb-14">
-                    <div className="mb-7">
-                        <p
-                            className="
-                                font-main
-                                text-lg
-                                text-gray-950
-                            "
-                        >
-                            Resume analysis
-                        </p>
+            <CopySection
+              title="Headline"
+              content={
+                linkedinCopy.headline ||
+                linkedin.headline
+              }
+              description="Copy this directly into your LinkedIn headline."
+            />
 
-                        <p
-                            className="
-                                mt-1
-                                font-body
-                                text-xs
-                                text-gray-400
-                            "
-                        >
-                            Structured view of the optimized resume.
-                        </p>
-                    </div>
+            <CopySection
+              title="About"
+              content={
+                linkedinCopy.about ||
+                linkedin.about
+              }
+              description="Copy this into your LinkedIn About section."
+            />
 
-                    <div className="space-y-5">
-                        {/* Summary */}
+            <CopySection
+              title="Experience"
+              content={
+                linkedinCopy.experience ||
+                linkedin.experience
+                  ?.map(
+                    (experience) =>
+                      `${experience.role} — ${experience.company}\n${experience.description}`
+                  )
+                  .join("\n\n")
+              }
+            />
 
-                        {resume.summary && (
-                            <div
-                                className="
-                                    rounded-3xl
-                                    border border-gray-200
-                                    bg-white
-                                    p-6
-                                "
-                            >
-                                <p
-                                    className="
-                                        font-main
-                                        text-sm
-                                        text-gray-950
-                                    "
-                                >
-                                    Summary
-                                </p>
+            <CopySection
+              title="Projects"
+              content={
+                linkedinCopy.projects ||
+                (Array.isArray(linkedin.projects)
+                  ? linkedin.projects
+                      .map((project) =>
+                        typeof project ===
+                        "string"
+                          ? project
+                          : `${project.name}\n${project.description}`
+                      )
+                      .join("\n\n")
+                  : "")
+              }
+            />
 
-                                <p
-                                    className="
-                                        mt-4
-                                        font-body
-                                        text-sm
-                                        leading-7
-                                        text-gray-500
-                                    "
-                                >
-                                    {resume.summary}
-                                </p>
-                            </div>
-                        )}
+          </div>
 
-                        {/* Experience */}
+          {/* SKILLS */}
 
-                        {safeExperience.length > 0 && (
-                            <div
-                                className="
-                                    rounded-3xl
-                                    border border-gray-200
-                                    bg-white
-                                    p-6
-                                "
-                            >
-                                <p
-                                    className="
-                                        font-main
-                                        text-sm
-                                        text-gray-950
-                                    "
-                                >
-                                    Experience
-                                </p>
+          {Array.isArray(linkedin.skills) &&
+            linkedin.skills.length > 0 && (
+              <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_20px_rgba(15,23,42,0.035)]">
 
-                                <div
-                                    className="
-                                        mt-6
-                                        space-y-8
-                                    "
-                                >
-                                    {safeExperience.map(
-                                        (item, index) => (
-                                            <div
-                                                key={index}
-                                            >
-                                                <div
-                                                    className="
-                                                        flex
-                                                        flex-col
-                                                        gap-1
-                                                        sm:flex-row
-                                                        sm:items-start
-                                                        sm:justify-between
-                                                    "
-                                                >
-                                                    <div>
-                                                        <p
-                                                            className="
-                                                                font-main
-                                                                text-sm
-                                                                text-gray-950
-                                                            "
-                                                        >
-                                                            {
-                                                                item.role
-                                                            }
-                                                        </p>
+                <div className="flex items-center justify-between gap-4">
 
-                                                        <p
-                                                            className="
-                                                                mt-1
-                                                                font-body
-                                                                text-xs
-                                                                text-gray-400
-                                                            "
-                                                        >
-                                                            {
-                                                                item.company
-                                                            }
+                  <h3 className="font-main font-semibold text-slate-900">
+                    Recommended skills
+                  </h3>
 
-                                                            {item.location
-                                                                ? ` · ${item.location}`
-                                                                : ""}
-                                                        </p>
-                                                    </div>
+                  <CopyButton
+                    text={linkedin.skills.join(", ")}
+                    small
+                  />
 
-                                                    <p
-                                                        className="
-                                                            font-body
-                                                            text-xs
-                                                            text-gray-400
-                                                        "
-                                                    >
-                                                        {
-                                                            item.startDate
-                                                        }
+                </div>
 
-                                                        {" – "}
+                <div className="mt-4 flex flex-wrap gap-2">
 
-                                                        {
-                                                            item.endDate
-                                                        }
-                                                    </p>
-                                                </div>
+                  {linkedin.skills.map(
+                    (skill, index) => (
+                      <Tag key={index}>
+                        {skill}
+                      </Tag>
+                    )
+                  )}
 
-                                                <ul
-                                                    className="
-                                                        mt-4
-                                                        space-y-2
-                                                    "
-                                                >
-                                                    {(
-                                                        item.bullets ||
-                                                        []
-                                                    ).map(
-                                                        (
-                                                            bullet,
-                                                            bulletIndex
-                                                        ) => (
-                                                            <li
-                                                                key={
-                                                                    bulletIndex
-                                                                }
-                                                                className="
-                                                                    flex
-                                                                    gap-3
-                                                                    font-body
-                                                                    text-sm
-                                                                    leading-6
-                                                                    text-gray-500
-                                                                "
-                                                            >
-                                                                <span
-                                                                    className="
-                                                                        mt-2
-                                                                        h-1.5
-                                                                        w-1.5
-                                                                        shrink-0
-                                                                        rounded-full
-                                                                        bg-blue-500
-                                                                    "
-                                                                />
+                </div>
 
-                                                                <span>
-                                                                    {
-                                                                        bullet
-                                                                    }
-                                                                </span>
-                                                            </li>
-                                                        )
-                                                    )}
-                                                </ul>
-                                            </div>
-                                        )
-                                    )}
-                                </div>
-                            </div>
-                        )}
+              </div>
+            )}
 
-                        {/* Projects */}
+          {/* EDUCATION */}
 
-                        {safeProjects.length > 0 && (
-                            <div
-                                className="
-                                    rounded-3xl
-                                    border border-gray-200
-                                    bg-white
-                                    p-6
-                                "
-                            >
-                                <p
-                                    className="
-                                        font-main
-                                        text-sm
-                                        text-gray-950
-                                    "
-                                >
-                                    Projects
-                                </p>
+          {Array.isArray(linkedin.education) &&
+            linkedin.education.length > 0 && (
+              <div className="mt-5">
 
-                                <div
-                                    className="
-                                        mt-6
-                                        space-y-8
-                                    "
-                                >
-                                    {safeProjects.map(
-                                        (project, index) => (
-                                            <div
-                                                key={index}
-                                            >
-                                                <p
-                                                    className="
-                                                        font-main
-                                                        text-sm
-                                                        text-gray-950
-                                                    "
-                                                >
-                                                    {
-                                                        project.name
-                                                    }
-                                                </p>
-
-                                                {(
-                                                    project.technologies ||
-                                                    []
-                                                ).length > 0 && (
-                                                    <div
-                                                        className="
-                                                            mt-3
-                                                            flex
-                                                            flex-wrap
-                                                            gap-2
-                                                        "
-                                                    >
-                                                        {project.technologies.map(
-                                                            (
-                                                                tech,
-                                                                techIndex
-                                                            ) => (
-                                                                <span
-                                                                    key={
-                                                                        techIndex
-                                                                    }
-                                                                    className="
-                                                                        rounded-full
-                                                                        bg-gray-100
-                                                                        px-3
-                                                                        py-1.5
-                                                                        font-body
-                                                                        text-[11px]
-                                                                        text-gray-500
-                                                                    "
-                                                                >
-                                                                    {
-                                                                        tech
-                                                                    }
-                                                                </span>
-                                                            )
-                                                        )}
-                                                    </div>
-                                                )}
-
-                                                <ul
-                                                    className="
-                                                        mt-4
-                                                        space-y-2
-                                                    "
-                                                >
-                                                    {(
-                                                        project.bullets ||
-                                                        []
-                                                    ).map(
-                                                        (
-                                                            bullet,
-                                                            bulletIndex
-                                                        ) => (
-                                                            <li
-                                                                key={
-                                                                    bulletIndex
-                                                                }
-                                                                className="
-                                                                    flex
-                                                                    gap-3
-                                                                    font-body
-                                                                    text-sm
-                                                                    leading-6
-                                                                    text-gray-500
-                                                                "
-                                                            >
-                                                                <span
-                                                                    className="
-                                                                        mt-2
-                                                                        h-1.5
-                                                                        w-1.5
-                                                                        shrink-0
-                                                                        rounded-full
-                                                                        bg-blue-500
-                                                                    "
-                                                                />
-
-                                                                <span>
-                                                                    {
-                                                                        bullet
-                                                                    }
-                                                                </span>
-                                                            </li>
-                                                        )
-                                                    )}
-                                                </ul>
-                                            </div>
-                                        )
-                                    )}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Education */}
-
-                        {safeEducation.length > 0 && (
-                            <div
-                                className="
-                                    rounded-3xl
-                                    border border-gray-200
-                                    bg-white
-                                    p-6
-                                "
-                            >
-                                <p
-                                    className="
-                                        font-main
-                                        text-sm
-                                        text-gray-950
-                                    "
-                                >
-                                    Education
-                                </p>
-
-                                <div
-                                    className="
-                                        mt-6
-                                        space-y-5
-                                    "
-                                >
-                                    {safeEducation.map(
-                                        (
-                                            education,
-                                            index
-                                        ) => (
-                                            <div
-                                                key={index}
-                                                className="
-                                                    flex
-                                                    flex-col
-                                                    gap-1
-                                                    sm:flex-row
-                                                    sm:items-start
-                                                    sm:justify-between
-                                                "
-                                            >
-                                                <div>
-                                                    <p
-                                                        className="
-                                                            font-main
-                                                            text-sm
-                                                            text-gray-950
-                                                        "
-                                                    >
-                                                        {
-                                                            education.degree
-                                                        }
-                                                    </p>
-
-                                                    <p
-                                                        className="
-                                                            mt-1
-                                                            font-body
-                                                            text-xs
-                                                            text-gray-400
-                                                        "
-                                                    >
-                                                        {
-                                                            education.institution
-                                                        }
-
-                                                        {education.location
-                                                            ? ` · ${education.location}`
-                                                            : ""}
-                                                    </p>
-                                                </div>
-
-                                                <p
-                                                    className="
-                                                        font-body
-                                                        text-xs
-                                                        text-gray-400
-                                                    "
-                                                >
-                                                    {
-                                                        education.startYear
-                                                    }
-
-                                                    {" – "}
-
-                                                    {
-                                                        education.endYear
-                                                    }
-                                                </p>
-                                            </div>
-                                        )
-                                    )}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </section>
-
-                {/* =================================================
-                    LINKEDIN
-                ================================================= */}
-
-                <section className="mb-14">
-                    <PlatformHeader
-                        icon={
-                            <FaLinkedinIn size={15} />
-                        }
-                        title="LinkedIn optimization"
-                        description="Recruiter-searchable content ready to paste."
-                    />
-
-                    <div className="mb-5 flex justify-end">
-                        <CopyButton
-                            text={linkedinAll}
-                            label="Copy LinkedIn content"
-                        />
-                    </div>
-
-                    <div className="space-y-5">
-                        <CopySection
-                            title="Headline"
-                            icon={
-                                <FaLinkedinIn size={15} />
-                            }
-                            text={
-                                linkedinCopy.headline ||
-                                linkedin.headline ||
-                                ""
-                            }
-                            description="Recruiter-searchable professional headline"
-                        />
-
-                        <CopySection
-                            title="About"
-                            icon={
-                                <FaLinkedinIn size={15} />
-                            }
-                            text={
-                                linkedinCopy.about ||
-                                linkedin.about ||
-                                ""
-                            }
-                            description="Concise professional summary"
-                        />
-
-                        <CopySection
-                            title="Experience"
-                            icon={
-                                <LuBriefcaseBusiness
-                                    size={17}
-                                />
-                            }
-                            text={
-                                linkedinCopy.experience ||
-                                ""
-                            }
-                            description="Optimized LinkedIn experience descriptions"
-                        />
-                    </div>
-                </section>
-
-                {/* =================================================
-                    LINKEDIN STRUCTURED DATA
-                ================================================= */}
-
-                <section className="mb-14">
-                    <div className="mb-7">
-                        <p
-                            className="
-                                font-main
-                                text-lg
-                                text-gray-950
-                            "
-                        >
-                            LinkedIn recommendations
-                        </p>
-
-                        <p
-                            className="
-                                mt-1
-                                font-body
-                                text-xs
-                                text-gray-400
-                            "
-                        >
-                            Additional profile sections generated from
-                            your existing information.
-                        </p>
-                    </div>
-
-                    <div className="space-y-5">
-                        {linkedin.skills?.length > 0 && (
-                            <div
-                                className="
-                                    rounded-3xl
-                                    border border-gray-200
-                                    bg-white
-                                    p-6
-                                "
-                            >
-                                <p
-                                    className="
-                                        font-main
-                                        text-sm
-                                        text-gray-950
-                                    "
-                                >
-                                    Recommended skills
-                                </p>
-
-                                <div
-                                    className="
-                                        mt-5
-                                        flex
-                                        flex-wrap
-                                        gap-2
-                                    "
-                                >
-                                    {linkedin.skills.map(
-                                        (skill, index) => (
-                                            <span
-                                                key={index}
-                                                className="
-                                                    rounded-full
-                                                    bg-gray-100
-                                                    px-4
-                                                    py-2
-                                                    font-body
-                                                    text-xs
-                                                    text-gray-600
-                                                "
-                                            >
-                                                {skill}
-                                            </span>
-                                        )
-                                    )}
-                                </div>
-                            </div>
-                        )}
-
-                        {linkedin.projects?.length > 0 && (
-                            <CollapsibleList
-                                title="LinkedIn projects"
-                                icon={
-                                    <LuCode2 size={17} />
-                                }
-                                items={linkedin.projects.map(
-                                    (project) => {
-                                        if (
-                                            typeof project ===
-                                            "string"
-                                        ) {
-                                            return project;
-                                        }
-
-                                        return `${project.name || ""}${
-                                            project.description
-                                                ? ` — ${project.description}`
-                                                : ""
-                                        }`;
-                                    }
-                                )}
-                            />
-                        )}
-
-                        {linkedin.featured?.length > 0 && (
-                            <CollapsibleList
-                                title="Featured section"
-                                icon={
-                                    <LuTarget size={17} />
-                                }
-                                items={
-                                    linkedin.featured
-                                }
-                            />
-                        )}
-
-                        {linkedin.achievements?.length >
-                            0 && (
-                            <CollapsibleList
-                                title="Achievements"
-                                icon={
-                                    <LuCheckCircle2
-                                        size={17}
-                                    />
-                                }
-                                items={
-                                    linkedin.achievements
-                                }
-                            />
-                        )}
-                    </div>
-                </section>
-
-                {/* =================================================
-                    GITHUB
-                ================================================= */}
-
-                <section className="mb-14">
-                    <PlatformHeader
-                        icon={
-                            <LuGithub size={18} />
-                        }
-                        title="GitHub optimization"
-                        description="A complete professional README synchronized with your resume."
-                    />
-
-                    <div className="mb-5 flex justify-end">
-                        <CopyButton
-                            text={githubAll}
-                            label="Copy README"
-                        />
-                    </div>
-
-                    <CopySection
-                        title="README.md"
-                        icon={
-                            <LuGithub size={17} />
-                        }
-                        text={
-                            githubCopy.readme ||
-                            github.readme ||
-                            ""
-                        }
-                        description="Complete copy-ready GitHub profile README"
-                    />
-                </section>
-
-                {/* =================================================
-                    FINAL CTA
-                ================================================= */}
-
-                <section
-                    className="
-                        rounded-[2rem]
-                        border border-gray-200
-                        bg-white
-                        p-7
-                        sm:p-10
-                    "
+                <Collapsible
+                  title="Education"
+                  defaultOpen={false}
                 >
-                    <div
-                        className="
-                            flex
-                            flex-col
-                            gap-7
-                            sm:flex-row
-                            sm:items-center
-                            sm:justify-between
-                        "
-                    >
-                        <div>
-                            <div className="flex items-center gap-2">
-                                <LuSparkles
-                                    size={17}
-                                    className="text-blue-500"
-                                />
 
-                                <p
-                                    className="
-                                        font-body
-                                        text-xs
-                                        tracking-[0.18em]
-                                        text-gray-400
-                                    "
-                                >
-                                    NEXT STEP
-                                </p>
-                            </div>
+                  <div className="space-y-3">
 
-                            <h2
-                                className="
-                                    mt-3
-                                    font-main
-                                    text-2xl
-                                    text-gray-950
-                                "
-                            >
-                                Make your profiles consistent.
-                            </h2>
-
-                            <p
-                                className="
-                                    mt-2
-                                    max-w-xl
-                                    font-body
-                                    text-sm
-                                    leading-6
-                                    text-gray-500
-                                "
-                            >
-                                Start with the copy-ready sections
-                                above and update your Resume, LinkedIn
-                                and GitHub with the same professional identity.
-                            </p>
-                        </div>
-
-                        <button
-                            onClick={() => navigate("/")}
-                            className="
-                                shrink-0
-                                rounded-full
-                                bg-gray-950
-                                px-6
-                                py-3
-                                font-body
-                                text-sm
-                                text-white
-                                transition
-                                hover:bg-blue-600
-                            "
+                    {linkedin.education.map(
+                      (item, index) => (
+                        <div
+                          key={index}
+                          className="rounded-xl border border-slate-100 bg-slate-50 p-4 font-body text-sm leading-6 text-slate-600"
                         >
-                            Analyze another profile
-                        </button>
-                    </div>
-                </section>
+                          {typeof item === "string"
+                            ? item
+                            : JSON.stringify(
+                                item
+                              )}
+                        </div>
+                      )
+                    )}
+
+                  </div>
+
+                </Collapsible>
+
+              </div>
+            )}
+
+        </section>
+
+        {/* =====================================================
+            GITHUB
+        ===================================================== */}
+
+        <section className="mb-16">
+
+          <SectionHeader
+            eyebrow="GitHub"
+            title="GitHub README optimization"
+            description="A professional README that communicates your skills, projects and engineering focus clearly."
+            icon={<FiGithub />}
+          />
+
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_4px_20px_rgba(15,23,42,0.035)]">
+
+            <div className="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-4">
+
+              <div>
+
+                <h3 className="font-main font-semibold text-slate-900">
+                  README.md
+                </h3>
+
+                <p className="mt-1 font-body text-xs text-slate-400">
+                  Copy this directly to your GitHub profile README.
+                </p>
+
+              </div>
+
+              <CopyButton
+                text={
+                  githubCopy.readme ||
+                  github.readme
+                }
+              />
+
             </div>
-        </main>
-    );
+
+            <pre className="max-h-[700px] overflow-auto whitespace-pre-wrap bg-slate-50 p-5 font-body text-sm leading-7 text-slate-600">
+              {githubCopy.readme ||
+                github.readme ||
+                "No README content generated."}
+            </pre>
+
+          </div>
+
+        </section>
+
+        {/* =====================================================
+            FINAL CTA
+        ===================================================== */}
+
+        <section className="relative overflow-hidden rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-white p-8 text-center sm:p-12">
+
+          <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-blue-200/30 blur-3xl" />
+
+          <div className="relative">
+
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-600/20">
+              <FiTrendingUp />
+            </div>
+
+            <h2 className="mt-5 font-main text-2xl font-bold text-slate-950 sm:text-3xl">
+              Your profile is ready to improve.
+            </h2>
+
+            <p className="mx-auto mt-3 max-w-xl font-body text-sm leading-6 text-slate-500">
+              Use the copy buttons above to update your Resume,
+              LinkedIn and GitHub with the optimized content.
+            </p>
+
+            <button
+              onClick={() => navigate("/product")}
+              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-body text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700"
+            >
+              Run another analysis
+              <FiArrowRight />
+            </button>
+
+          </div>
+
+        </section>
+
+      </main>
+    </div>
+  );
 };
 
 export default AnalysisPage;
-

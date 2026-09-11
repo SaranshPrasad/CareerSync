@@ -9,7 +9,7 @@ import HomePage from "./Pages/HomePage";
 import ProductPage from "./Pages/ProductPage";
 import Auth from "./Pages/Auth";
 import About from "./Components/About";
-
+import AnalysisPage from "./Pages/AnalysisPage";
 
 function App() {
   const location = useLocation();
@@ -24,7 +24,10 @@ function App() {
         <Route path="/product" element={<ProductPage />} />
         <Route path="/about" element={<About />} />
         <Route path="/auth" element={<Auth />} />
-       
+        <Route
+          path="/analysis"
+          element={<AnalysisPage />}
+        />
       </Routes>
 
       {!isAuthPage && <CTA />}
