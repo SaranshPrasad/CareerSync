@@ -7,7 +7,7 @@ const userRouter = require("./src/routes/userRouter");
 require("dotenv").config();
 
 app.use(cors({
-    origin:"http://localhost:5173",
+    origin:"http://localhost:5173" || process.env.VITE_URL,
     methods:["GET", "PUT", "POST", "PATCH", "DELETE"],
     credentials:true
 }));
