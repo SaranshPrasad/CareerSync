@@ -1711,7 +1711,7 @@ const ProductPage = () => {
             formData.append("github", github);
 
             const res = await axios.post(
-                "http://localhost:3000/user/analyze",
+                "https://careersync-ptdr.onrender.com/user/analyze",
                 formData,
                 {
                     headers: {

@@ -17,7 +17,7 @@ const Auth = () => {
     const handleAuth = async() => {
         try {
             if(currentPage === 'login'){
-            let baseUrl = "http://localhost:3000/auth/login";
+            let baseUrl = "https://careersync-ptdr.onrender.com/auth/login";
             const res = await axios.post(baseUrl, {email, password});
             if(res.status === 200){
                 alert("Login Successfull.");
@@ -29,7 +29,7 @@ const Auth = () => {
                 alert("Something went wrong. "+ res.data.message);
             }
         }else{
-            const baseUrl = "http://localhost:3000/auth/signup";
+            const baseUrl = "https://careersync-ptdr.onrender.com/auth/signup";
             const res = await axios.post(baseUrl, {email, password, repassword});
             if(res.status === 200){
                 alert("SignUp Successfull..");
