@@ -1,0 +1,5 @@
+@import "tailwindcss";
+@theme{
+    --font-main: "Boldonse", system-ui;
+    --font-body: "Purple Purse", serif;
+}
